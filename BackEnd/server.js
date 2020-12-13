@@ -4,6 +4,7 @@ const port = 4000; //change from 3000 as running 2 applications simultaneously
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose"); //including mongoose
+const path  = require('path');
 
 app.use(cors());
 app.use(function (req, res, next) {
@@ -15,6 +16,13 @@ app.use(function (req, res, next) {
   );
   next();
 });
+
+//set up config
+//point to build folder
+app.use(express.static(path.join(__dirname, '../build')));
+//point to static folder
+app.use('/static', express.static(path.join(__dirname, 'build//static')));
+
 
 //parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -116,6 +124,10 @@ app.post("/api/movies", (req, res) => {
   res.send("Item Added");
 });
 
+//for any other urls, send back index.html
+app.get('*',(req,res)=>{
+  res.sendFile(path.join(__dirname+'/../build/index.html'));//sending file and joining 2 paths
+})
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
